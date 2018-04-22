@@ -16,7 +16,7 @@ void draw(); // draw game interface
 void play(); // game logic
 void init(); //initialization function
 void draw_one(int y, int x); // draw single number
-void vnt_value(int *new_y, int *new_x); //
+void cnt_value(int *new_y, int *new_x); //
 int game_over();
 int cnt_one(int y, int x); //
 
@@ -293,7 +293,7 @@ void play()
             cnt_value(&new_y, &new_x);
 
             do {
-                temp = rand() % 4
+                temp = rand() % 4;
             } while(temp == 0 || temp == 2);
             a[new_y][new_x] = temp + 1;
             empty--;
@@ -311,7 +311,7 @@ int cnt_one(int y, int x)
         a[y-1][x] ? 0 : value++;
     if(y + 1 < 4)
         a[y+1][x] ? 0 : value++;
-    if(x - 1 > = 0)
+    if(x - 1 >= 0)
         a[y][x-1] ? 0 : value++;
     if(x + 1 < 4)
         a[y][x+1] ? 0 : value++;
@@ -327,7 +327,7 @@ int cnt_one(int y, int x)
     return value;
 }
 
-//copy
+//copy from example
 void cnt_value(int *new_y, int *new_x)
 {
     int max_x, max_y, x, y, value;
@@ -337,14 +337,11 @@ void cnt_value(int *new_y, int *new_x)
     for(y = 0; y < 4; y++)
         for(x = 0; x < 4; x++) 
         {
-            // ??(y, x)???????
             if(!a[y][x]) 
             {
-                // ??????????????????
                 value = cnt_one(y, x);
                 if(value > max && old_y != y && old_x != x) 
                 {  
-                    // ??????????????
                     *new_y = y;
                     *new_x = x;
                     old_x = x;
@@ -359,7 +356,7 @@ int game_over()
 {
     sleep(1);
     endwin();
-    exit(0)
+    exit(0);
 }
 
 
