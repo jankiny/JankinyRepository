@@ -6,6 +6,7 @@
 char **cvas;    // Canvas
 int a[4], b[4];    // save cooedinate
 int emp[16];    // use to product number in empty position
+int empty = 16;    // use to judge gameover
 
 void init();    // initialization
 char randN(int m);    // return 4 or 2, 'm' mean probability of '4'
@@ -16,7 +17,7 @@ void play();    // game main logic
 int main() {
     init();
     refresh();
-//    play();
+    play();
 }
 
 // create a canvas, and draw line, product begining number
@@ -94,33 +95,56 @@ void product_number() {
     cursor_move(*(a+n/4), *(b+n%4));
     addch(randN(50));    // 50 is probability
     emp[n] = 1;
+    empty--;
 }
 
 void play() {
-    int new_a, new_b;
-    int score;
+    int i, j;
     char ch;
 
     while(1) {
-        ch = getchar();    // TODO
-
-        switch(ch) {
+        switch(ch=getch()) {
             case 97: 
             case 65: 
             case 27: 
-                printf("3\n"); break;
+                // left (testing)
+                printf("left \n");
+                printf("go on \n");
+                for(i = 0; i < 4; i++) {
+                    printf("%d", i);
+                    for(j = 3; j > 0; j--) {
+                        if(cvas[*(a+i)][*(b+j-1)] == ' ')
+                            while(j < 4) {
+                                cursor_move(*(a+i), *(b+j));
+                                char_move(*(a+i), *(b+j-1));
+                                j++;
+                            }
+                        else if(cvas[*(a+i)][*(b+j-1)] == cvas[*(a+i)][*(b+j)]) {
+                            cursor_move(*(a+i), *(b+j));
+                            char_move(*(a+i), *(b+j-1));
+                            cvas[*(a+i)][*(b+j-1)] *= 2;
+                        }
+                        else if(cvas[*(a+i)][*(b+j-1)] != cvas[*(a+i)][*(b+j)])
+                            continue;
+                    }
+                }
+                judge_empty();
+                product_number();
+                refresh;
+                printf("left finish \n");
+                break;
             case 100: 
             case 68: 
             case 26: 
-                printf("6\n"); break;
+                // right
             case 119: 
             case 87: 
             case 24: 
-                printf("2\n"); break;
+                // up
             case 115: 
             case 83: 
             case 25: 
-                printf("2\n"); break;
+                // down
             default:
                 break;
         }

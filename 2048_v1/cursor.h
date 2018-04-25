@@ -1,4 +1,4 @@
-/* cursor handle need to include: stdio.h, stdlib.h */
+/* cursor handle need to include: */
 
 /* principles: First, we create a Canvas(define a rectangular space),   
                it was full of ' '(space), and surranded by black lines. 
@@ -74,6 +74,7 @@ void cursor_move(int a, int b) {
     y = b;
 }
 
+// Notice: before use it, use cursor_move to right position(x, y)
 void char_move(int a, int b) {
     char temp;
 
