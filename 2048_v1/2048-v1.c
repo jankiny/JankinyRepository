@@ -11,10 +11,12 @@ void init();    // initialization
 char randN(int m);    // return 4 or 2, 'm' mean probability of '4'
 void judge_empty();    //judge empty position
 void product_number();    // product number in empty position
+void play();    // game main logic
 
 int main() {
     init();
     refresh();
+    play();
 }
 
 // create a canvas, and draw line, product begining number
@@ -94,3 +96,33 @@ void product_number() {
     emp[n] = 1;
 }
 
+void play() {
+    int new_a, new_b;
+    int score;
+    char ch;
+
+    while(1) {
+        ch = getchar();    // TODO
+
+        switch(ch) {
+            case 97: 
+            case 65: 
+            case 27: 
+                printf("3\n"); break;
+            case 100: 
+            case 68: 
+            case 26: 
+                printf("6\n"); break;
+            case 119: 
+            case 87: 
+            case 24: 
+                printf("2\n"); break;
+            case 115: 
+            case 83: 
+            case 25: 
+                printf("2\n"); break;
+            default:
+                break;
+        }
+    }
+}
