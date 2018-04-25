@@ -16,7 +16,7 @@ void play();    // game main logic
 int main() {
     init();
     refresh();
-    play();
+//    play();
 }
 
 // create a canvas, and draw line, product begining number
