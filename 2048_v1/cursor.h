@@ -7,6 +7,10 @@
 /* As for the direction, x is pointing to down, and y is pointing to right */
 
 #include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+#include <assert.h>
+#include <string.h>
 #include <stdlib.h>
 #ifndef __CURSOR_H__
 #define __CURSOR_H__
@@ -107,5 +111,14 @@ void changeMode(int n) {
     }
     else
         printf("Only 1-2 modes exist!\n");
+}
+
+int getch() {
+    int c = 0;
+    struct termios org_opts, new_opts;
+    int res = 0;
+
+    res = tcgetattr(STDIN_FILENO, &org_opts);
+    assert(res==0)
 }
 #endif
