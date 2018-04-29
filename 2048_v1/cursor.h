@@ -93,7 +93,7 @@ void char_move(int a, int b) {
 void refresh() {
     int i, j;
 
-    system("reset");
+    system("clear");
 //    printf("\033[2J"); // screen output control: clear screen
     for(i = 0; i <= range_x; i++) {
         for(j = 0; j <= range_y; j++) {

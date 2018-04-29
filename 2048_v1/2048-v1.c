@@ -13,6 +13,7 @@ char randN(int m);    // return 4 or 2, 'm' mean probability of '4'
 void judge_empty();    //judge empty position
 void product_number();    // product number in empty position
 void play();    // game main logic
+int line_empty(int r);    // whether empty
 
 int main() {
     init();
@@ -73,10 +74,12 @@ char randN(int m) {    // m% return 4
 void judge_empty() {
     int i, j;
 
+    empty = 0;
     for(i = 0; i < 4; i++) {
         for(j = 0; j < 4; j++) {
             if(cvas[*(a+i)][*(b+j)] == ' ') {
                 emp[i*4+j] = 0;
+                empty++;
             }
         }
     }
@@ -100,6 +103,7 @@ void product_number() {
 
 void play() {
     int i, j;
+    int m;
     char ch;
 
     while(1) {
@@ -108,17 +112,20 @@ void play() {
             case 65: 
             case 27: 
                 // left (testing)
-                printf("left \n");
-                printf("go on \n");
                 for(i = 0; i < 4; i++) {
-                    printf("%d", i);
+/*  TODO
+                    if(line_empty(i))
+                        continue;
+*/
                     for(j = 3; j > 0; j--) {
-                        if(cvas[*(a+i)][*(b+j-1)] == ' ')
-                            while(j < 4) {
-                                cursor_move(*(a+i), *(b+j));
-                                char_move(*(a+i), *(b+j-1));
-                                j++;
+                        if(cvas[*(a+i)][*(b+j-1)] == ' ') {
+                            m = j;
+                            while(m < 4) {
+                                cursor_move(*(a+i), *(b+m));
+                                char_move(*(a+i), *(b+m-1));
+                                m++;
                             }
+                        }
                         else if(cvas[*(a+i)][*(b+j-1)] == cvas[*(a+i)][*(b+j)]) {
                             cursor_move(*(a+i), *(b+j));
                             char_move(*(a+i), *(b+j-1));
@@ -149,4 +156,17 @@ void play() {
                 break;
         }
     }
+}
+
+int line_empty(int r) {
+    int i = 0;
+    int sum = 0;
+
+    while(4*r+i < 4) {
+       sum += emp[r+i];
+    }
+    if(sum == 0)
+        return 1;
+    else
+        return 0;
 }
