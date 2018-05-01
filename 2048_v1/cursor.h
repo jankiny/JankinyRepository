@@ -1,4 +1,4 @@
-/* cursor handle need to include: */
+/* Notice: do not use "cvas_x, cvas_y, range_x, canvas, mode" as variable name */
 
 /* principles: First, we create a Canvas(define a rectangular space),   
                it was full of ' '(space), and surranded by black lines. 
@@ -15,19 +15,12 @@
 #ifndef __CURSOR_H__
 #define __CURSOR_H__
 #define SPACE ' '
-int x, y;    //cursors
+int cvas_x, cvas_y;    //cursors
 int range_x = 0;
 int range_y = 0;
 char **cvas;
 int mode = 2; // 1(use): hide detials; 2(debug):show detials
 
-// test int array
-void show_iarray(int *a, int n) {
-    int i;
-
-    for(i = 0; i < n; i++)
-        printf("%d ", *(a+i));
-}
 // create a Canvas
 char **canvas(int a, int b) {
     int i, j;
@@ -40,7 +33,7 @@ char **canvas(int a, int b) {
     range_y = b+1;
     for(i = 0; i <= a+1; i++) {
         for(j = 0; j <= b+1; j++) {
-            x = i, y = j;
+            cvas_x = i, cvas_y = j;
             if(i == 0 || i == a+1)
                 cvas[i][j] = '-';
             else if(j == 0 || j == b+1)
@@ -55,26 +48,20 @@ char **canvas(int a, int b) {
 void addch(char ch) {
     extern char **cvas;
 
-    cvas[x][y] = ch;
+    cvas[cvas_x][cvas_y] = ch;
 }
-/* //Can't work
-void delch() {
-    extern char **cvas;
 
-    cvas[x][y] == SPACE;
-}
-*/
 void cursor_move(int a, int b) {
     if(a == 0 || b == 0 || a >= range_x || b >= range_y) {
         printf("cursor move out of range! \n");
         printf("(%d, %d) in range(1-%d,1-%d) \n", a, b, range_x, range_y);
         exit(1);
     }
-    x = a;
-    y = b;
+    cvas_x = a;
+    cvas_y = b;
 }
 
-// Notice: before use it, use cursor_move to right position(x, y)
+// Notice: before use it, use cursor_move to right position(cvas_x, cvas_y)
 void char_move(int a, int b) {
     char temp;
 
@@ -83,18 +70,17 @@ void char_move(int a, int b) {
         printf("(%d, %d) in range(1-%d,1-%d) \n", a, b, range_x, range_y);
         exit(1);
     }
-    temp = cvas[x][y];
-    cvas[x][y] = SPACE;
-    x = a;
-    y = b;
-    cvas[x][y] = temp;
+    temp = cvas[cvas_x][cvas_y];
+    cvas[cvas_x][cvas_y] = SPACE;
+    cvas_x = a;
+    cvas_y = b;
+    cvas[cvas_x][cvas_y] = temp;
 }
 
 void refresh() {
     int i, j;
 
     system("clear");
-//    printf("\033[2J"); // screen output control: clear screen
     for(i = 0; i <= range_x; i++) {
         for(j = 0; j <= range_y; j++) {
              printf("%c", cvas[i][j]);
@@ -106,7 +92,7 @@ void refresh() {
     }
 }
 
-void changeMode(int n) {
+void change_mode(int n) {
     if(n >= 1 && n <= 2) {
         mode = n;
     }

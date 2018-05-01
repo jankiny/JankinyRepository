@@ -6,7 +6,6 @@
 char **cvas;    // Canvas
 int mat[4][4];
 //int a[4], b[4];    // save cooedinate
-int emp[16];    // use to product number in empty position
 int empty = 16;    // use to judge gameover
 
 void init();    // initialization
@@ -29,7 +28,6 @@ int main() {
 // create a canvas, and draw line, product begining number
 void init() {
     int i, j;
-    int temp;
 
     // draw frame
     cvas = canvas(7, 15);    //need line x:2 4 6 y:4 8 12
@@ -50,8 +48,15 @@ void init() {
     for(i = 0; i < 4; i++)
         for(j = 0; j < 4; j++)
             mat[i][j] = 0;
-    product_number();
+//    product_number();
+    mat[2][2] = 4;
     map_mat();
+
+    if(mode == 2) {
+        for(i = 0; i < 4; i++) 
+            for(j = 0; j < 4; j++)
+                printf("%d ", mat[i][j]);
+    }
 }
 
 void map_mat() {
@@ -60,24 +65,26 @@ void map_mat() {
 
     a = 0;
     b = 0;
-    for(i = 1; i <= 7; i += 2) {
-        for(j = 3; j <= 15; j += 4) {
-            if(mat[a][b] == 0)
-                continue;
-            mat_to_canvas(i, j, a++, b++);
+    for(i = 1; i <= 7; i += 2, a++) {
+        for(j = 3; j <= 15; j += 4, b++) {
+//            if(mat[a][b] == 0) {
+//                continue;
+//              }
+            mat_to_canvas(i, j, a, b);
         }
     }
 }
 
 void mat_to_canvas(int x, int y, int a, int b) {
-    int n;
-    int i, t;
+    int n, t;
+    int i;
 
     i = 0;
     n = mat[a][b];
     do {
         t = n % 10;
-        cvas[x][y-i] = itoc(t); // TODO
+        cursor_move(x, y-i);
+        addch(itoc(t));
         i++;
     } while(n /= 10);
 }
@@ -99,15 +106,14 @@ int randN(int m) {    // m% return 4
 }
 
 void product_number() {
-    int n;
+    int a, b;
 
-    judge_empty();
     srand((int)time(NULL));
     do {
-        n = rand() % 15;    // n = [0,16]
-    } while(*(emp+n));    // if emp(n) is empty, out
-    mat[n/4][n%4-1] = randN(50);
-    *(emp+n) = 1;
+        a = rand() % 4;    // n = [0,16]
+        b = rand() % 4;
+    } while(mat[a][b]);    // if mat[a][b] == 0, out
+    mat[a][b] = randN(50);
     empty--;
 }
 
@@ -119,17 +125,9 @@ void judge_empty() {
     for(i = 0; i < 4; i++) {
         for(j = 0; j < 4; j++) {
             if(mat[i][j] == 0) {
-                *(emp+i*4+j) = 0;
                 empty++;
             }
-            else
-                *(emp+i*4+j) = 1;
         }
-    }
-    if(mode ==2) {
-        for(i = 0; i < 16; i++)
-            printf("%d ", *(emp+i*4+j));
-        printf("\n");
     }
 }
 
@@ -191,31 +189,6 @@ void play() {
                 break;
         }
     }
-}
-
-int line_empty(int r) {
-    int i = 0;
-    int sum = 0;
-
-    while(i < 4) {
-       sum += *(emp+4*r+i);
-       i++;
-    }
-    return sum;
-}
-
-void doubleN(int x, int y) {
-    int n;
-    int i, t;
-
-    n = (int)cvas[x][y];    // '0' is 48
-    printf("%d", n);
-    i = 0;
-    do {
-        t = n % 10;
-        cvas[x][y-i] = t;
-        i++;
-    } while(n /= 10);
 }
 
 void game_over() {
