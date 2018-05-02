@@ -9,6 +9,7 @@ int mat[4][4];
 int empty = 16;    // use to judge gameover
 
 void init();    // initialization
+void cvas_refresh();    // maping, and refresh
 void map_mat();    // map matrix to canvas
 void mat_to_canvas(int x, int y, int a, int b);
 char itoc(int n);
@@ -21,8 +22,8 @@ void play();    // game main logic
 
 int main() {
     init();
-    refresh();
-//    play();
+    cvas_refresh();
+    play();
 }
 
 // create a canvas, and draw line, product begining number
@@ -48,30 +49,39 @@ void init() {
     for(i = 0; i < 4; i++)
         for(j = 0; j < 4; j++)
             mat[i][j] = 0;
-//    product_number();
-    mat[2][2] = 4;
-    map_mat();
+    product_number();
+}
 
+void cvas_refresh() {
+    int i, j;
+
+    map_mat();
+    refresh();
     if(mode == 2) {
-        for(i = 0; i < 4; i++) 
+        for(i = 0; i < 4; i++) { 
             for(j = 0; j < 4; j++)
                 printf("%d ", mat[i][j]);
+            printf(";");
+        }
+        printf("\n");    // 'clear' will remain current line
     }
+
 }
 
 void map_mat() {
     int i, j;
     int a, b;
 
-    a = 0;
-    b = 0;
-    for(i = 1; i <= 7; i += 2, a++) {
-        for(j = 3; j <= 15; j += 4, b++) {
-//            if(mat[a][b] == 0) {
-//                continue;
-//              }
+    for(a = 0, i = 1; i <= 7; i += 2) {
+        for(b = 0, j = 3; j <= 15; j += 4) {
+            if(mat[a][b] == 0) {
+                b++;
+                continue;
+            }
             mat_to_canvas(i, j, a, b);
+            b++;
         }
+        a++;
     }
 }
 
@@ -117,6 +127,7 @@ void product_number() {
     empty--;
 }
 
+/*
 // judge empty pisition
 void judge_empty() {
     int i, j;
@@ -130,6 +141,7 @@ void judge_empty() {
         }
     }
 }
+*/
 
 void play() {
     int i, j;
@@ -142,37 +154,32 @@ void play() {
             case 97: 
             case 65: 
             case 27: 
-/*
-                judge_empty();
                 // left (testing)
                 for(i = 0; i < 4; i++) {
-                    if(line_empty(i))
-                        continue;
-                    for(j = 3; j > 0; j--) {
-                        if(cvas[*(a+i)][*(b+j-1)] == ' ') {
-                            m = j;
+                    for(j = 3; j >= 0; j--) {
+                        if(j != 0 && mat[i][j] != mat[i][j-1]) {
+                            continue;
+                        }
+                        else if(j != 0 && mat[i][j] == mat[i][j-1]) {
+                            mat[i][j-1] += mat[i][j];
+                            mat[i][j] = 0;
+                        }
+                        else if(mat[i][j] = 0) {
+                            m = j+1;
                             while(m < 4) {
-                                cursor_move(*(a+i), *(b+m));
-                                char_move(*(a+i), *(b+m-1));
+                                mat[i][m-1] = mat[i][m];
+                                mat[i][m] = 0;
                                 m++;
                             }
                         }
-                        else if(cvas[*(a+i)][*(b+j-1)] == cvas[*(a+i)][*(b+j)]) {
-                            cursor_move(*(a+i), *(b+j));
-                            char_move(*(a+i), *(b+j-1));
-                            doubleN(*(a+i), *(b+j-1));
-                        }
-                        else if(cvas[*(a+i)][*(b+j-1)] != cvas[*(a+i)][*(b+j)])
-                            continue;
                     }
                 }
-                refresh();
-                judge_empty();
                 product_number();
+                cvas_refresh();
 
                 printf("left finish \n");
                 break;
-*/
+
             case 100: 
             case 68: 
             case 26: 
