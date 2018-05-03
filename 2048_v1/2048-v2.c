@@ -6,7 +6,7 @@
 char **cvas;    // Canvas
 int mat[4][4];
 //int a[4], b[4];    // save cooedinate
-int empty = 16;    // use to judge gameover
+//int empty = 16;    // use to judge gameover
 
 void init();    // initialization
 void cvas_refresh();    // maping, and refresh
@@ -14,11 +14,10 @@ void map_mat();    // map matrix to canvas
 void mat_to_canvas(int x, int y, int a, int b);
 char itoc(int n);
 int randN(int m);    // return 4 or 2, 'm' mean probability of '4'
-void judge_empty();    //judge empty position
+int judge_empty();    //judge empty position
 void product_number();    // product number in empty position
 void play();    // game main logic
-//int line_empty(int r);    // whether empty
-//void doubleN(int x, int y);    // add two same numbers 
+void game_over();    // game over
 
 int main() {
     init();
@@ -63,9 +62,8 @@ void cvas_refresh() {
                 printf("%d ", mat[i][j]);
             printf(";");
         }
-        printf("\n");    // 'clear' will remain current line
+        printf("\n");
     }
-
 }
 
 void map_mat() {
@@ -74,10 +72,6 @@ void map_mat() {
 
     for(a = 0, i = 1; i <= 7; i += 2) {
         for(b = 0, j = 3; j <= 15; j += 4) {
-            if(mat[a][b] == 0) {
-                b++;
-                continue;
-            }
             mat_to_canvas(i, j, a, b);
             b++;
         }
@@ -89,14 +83,19 @@ void mat_to_canvas(int x, int y, int a, int b) {
     int n, t;
     int i;
 
-    i = 0;
-    n = mat[a][b];
-    do {
-        t = n % 10;
-        cursor_move(x, y-i);
-        addch(itoc(t));
-        i++;
-    } while(n /= 10);
+    if((n=mat[a][b]) == 0) {
+        cursor_move(x, y);
+        addch(' ');
+    }
+    else {
+        i = 0;
+        do {
+            t = n % 10;
+            cursor_move(x, y-i);
+            addch(itoc(t));
+            i++;
+        } while(n /= 10);
+    }
 }
 
 char itoc(int n) {
@@ -124,13 +123,12 @@ void product_number() {
         b = rand() % 4;
     } while(mat[a][b]);    // if mat[a][b] == 0, out
     mat[a][b] = randN(50);
-    empty--;
 }
 
-/*
 // judge empty pisition
-void judge_empty() {
+int judge_empty() {
     int i, j;
+    int empty;
 
     empty = 0;
     for(i = 0; i < 4; i++) {
@@ -140,14 +138,14 @@ void judge_empty() {
             }
         }
     }
+    return empty;
 }
-*/
 
 void play() {
-    int i, j;
-    int m;
+    int i, j, m;
     char ch;
-    int x, y;
+    int empty;
+    int flag = 0;
 
     while(1) {
         switch(ch=getch()) {
@@ -155,26 +153,36 @@ void play() {
             case 65: 
             case 27: 
                 // left (testing)
+                if((empty=judge_empty()) == 0) {
+                    game_over();
+                }
                 for(i = 0; i < 4; i++) {
-                    for(j = 3; j >= 0; j--) {
-                        if(j != 0 && mat[i][j] != mat[i][j-1]) {
-                            continue;
-                        }
-                        else if(j != 0 && mat[i][j] == mat[i][j-1]) {
-                            mat[i][j-1] += mat[i][j];
-                            mat[i][j] = 0;
-                        }
-                        else if(mat[i][j] = 0) {
-                            m = j+1;
+                    for(j = 3; j > 0; j--) {
+                        if(mat[i][j] != 0 && mat[i][j-1] == 0) {
+                            m = j;
                             while(m < 4) {
+                                if(mat[i][m] == 0)
+                                    break;
                                 mat[i][m-1] = mat[i][m];
                                 mat[i][m] = 0;
                                 m++;
                             }
+                            flag = 1;
                         }
-                    }
+                        else if(mat[i][j] != 0 && mat[i][j] == mat[i][j-1]) {
+                            mat[i][j-1] += mat[i][j];
+                            mat[i][j] = 0;
+                            flag = 1;
+                        }
+                        else if(mat[i][j] == 0 || mat[i][j] != mat[i][j-1]) {
+                            continue;
+                        }
+                   }
                 }
-                product_number();
+                if(flag) {
+                    product_number();
+                    flag = 0;
+                }
                 cvas_refresh();
 
                 printf("left finish \n");
@@ -199,8 +207,6 @@ void play() {
 }
 
 void game_over() {
-    if(empty == 0) {
-        printf("Game Over! \n");
-        exit(0);
-    }
+    printf("Game Over! \n");
+    exit(0);
 }
