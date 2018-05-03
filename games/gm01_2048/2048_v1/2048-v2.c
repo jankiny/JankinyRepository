@@ -9,8 +9,6 @@
 
 char **cvas;    // Canvas
 int mat[4][4];
-//int a[4], b[4];    // save cooedinate
-//int empty = 16;    // use to judge gameover
 
 void init();    // initialization
 void cvas_refresh();    // maping, and refresh
@@ -161,7 +159,6 @@ void play() {
         switch(ch=getch()) {
             case 97: 
             case 65: 
-//            case 26: 
                 // left 
                 if((empty=judge_empty()) == 0) {
                     game_over();
@@ -199,7 +196,6 @@ void play() {
                 break;
             case 100: 
             case 68: 
-//            case 27: 
                 // right
                 if((empty=judge_empty()) == 0) {
                     game_over();
@@ -237,7 +233,6 @@ void play() {
                 break;
             case 119: 
             case 87: 
-//            case 24: 
                 // up
                 if((empty=judge_empty()) == 0) {
                     game_over();
@@ -275,7 +270,6 @@ void play() {
                 break;
             case 115: 
             case 83: 
-//            case 25: 
                 // down
                 if((empty=judge_empty()) == 0) {
                     game_over();
