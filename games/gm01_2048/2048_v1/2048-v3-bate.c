@@ -180,8 +180,22 @@ void play() {
                             flag = 1;
                         }
                         else if(mat[i][j] != 0 && mat[i][j] == mat[i][j-1]) {
+                            if(j-2 > 0 && mat[i][j] == mat[i][j-2]) {
+                                if(j-3 > 0 && mat[i][j] == mat[i][j-3]) {
+                                    goto h1;
+                                }
+                                continue;
+                            }
+                            h1:    // goto h1
                             mat[i][j-1] += mat[i][j];
-                            mat[i][j] = 0;
+                            mat[i][m] = 0;
+
+                            m = j+1;
+                            while(m < 4) {
+                                mat[i][m-1] = mat[i][m];
+                                mat[i][m] = 0;
+                                m++;
+                            }
                             flag = 1;
                         }
                         else if(mat[i][j] == 0 || mat[i][j] != mat[i][j-1]) {
