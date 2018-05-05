@@ -92,7 +92,7 @@ void refresh() {
     }
 }
 
-void change_mode(int n) {
+void mode_change(int n) {
     if(n >= 1 && n <= 2) {
         mode = n;
     }

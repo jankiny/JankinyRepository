@@ -9,8 +9,7 @@
 
 char **cvas;    // Canvas
 int mat[4][4];
-//int a[4], b[4];    // save cooedinate
-//int empty = 16;    // use to judge gameover
+int score = 0;
 
 void init();    // initialization
 void cvas_refresh();    // maping, and refresh
@@ -25,6 +24,7 @@ void game_over();    // game over
 
 int main() {
     init();
+    mode_change(1);
     cvas_refresh();
     play();
 }
@@ -60,6 +60,7 @@ void cvas_refresh() {
 
     map_mat();
     refresh();
+    printf("Score: %d \n", score);
     if(mode == 2) {
         for(i = 0; i < 4; i++) { 
             for(j = 0; j < 4; j++)
@@ -146,6 +147,8 @@ int judge_empty() {
             if(mat[i][j] == 0) {
                 empty++;
             }
+            else if(mat[i][j] == 1024)
+                game_over(1);
         }
     }
     return empty;
@@ -164,7 +167,7 @@ void play() {
 //            case 26: 
                 // left 
                 if((empty=judge_empty()) == 0) {
-                    game_over();
+                    game_over(0);
                 }
                 for(i = 0; i < 4; i++) {
                     for(j = 3; j > 0; j--) {
@@ -180,25 +183,20 @@ void play() {
                             flag = 1;
                         }
                         else if(mat[i][j] != 0 && mat[i][j] == mat[i][j-1]) {
-                            if(j-2 > 0 && mat[i][j] == mat[i][j-2]) {
-                                if(j-3 > 0 && mat[i][j] == mat[i][j-3]) {
+                            if(j-2 >= 0 && mat[i][j] == mat[i][j-2]) {
+                                if(j-3 >= 0 && mat[i][j] == mat[i][j-3]) {
                                     goto h1;
                                 }
                                 continue;
                             }
                             h1:    // goto h1
                             mat[i][j-1] += mat[i][j];
-                            mat[i][m] = 0;
-
-                            m = j+1;
-                            while(m < 4) {
-                                mat[i][m-1] = mat[i][m];
-                                mat[i][m] = 0;
-                                m++;
-                            }
+                            mat[i][j] = 0;
+                            score += mat[i][j-1];
+                            j = 4;    // rejudge; after j--, j = 3
                             flag = 1;
                         }
-                        else if(mat[i][j] == 0 || mat[i][j] != mat[i][j-1]) {
+                        else {
                             continue;
                         }
                    }
@@ -216,7 +214,7 @@ void play() {
 //            case 27: 
                 // right
                 if((empty=judge_empty()) == 0) {
-                    game_over();
+                    game_over(0);
                 }
                 for(i = 0; i < 4; i++) {
                     for(j = 0; j < 3; j++) {
@@ -232,8 +230,17 @@ void play() {
                             flag = 1;
                         }
                         else if(mat[i][j] != 0 && mat[i][j] == mat[i][j+1]) {
+                            if(j+2 <= 3 && mat[i][j] == mat[i][j+2]) {
+                                if(j+3 <= 3 && mat[i][j] == mat[i][j+3]) {
+                                    goto h2;
+                                }
+                                continue;
+                            }
+                            h2:    // goto h2
                             mat[i][j+1] += mat[i][j];
                             mat[i][j] = 0;
+                            score += mat[i][j+1];
+                            j = -1;
                             flag = 1;
                         }
                         else if(mat[i][j] == 0 || mat[i][j] != mat[i][j+1]) {
@@ -254,7 +261,7 @@ void play() {
 //            case 24: 
                 // up
                 if((empty=judge_empty()) == 0) {
-                    game_over();
+                    game_over(0);
                 }
                 for(j = 0; j < 4; j++) {
                     for(i = 3; i > 0; i--){
@@ -270,8 +277,17 @@ void play() {
                             flag = 1;
                         }
                         else if(mat[i][j] != 0 && mat[i][j] == mat[i-1][j]) {
+                            if(i-2 >= 0 && mat[i][j] == mat[i-2][j]) {
+                                if(i-3 >= 0 && mat[i][j] == mat[i-3][j]) {
+                                    goto h3;
+                                }
+                                continue;
+                            }
+                            h3:    // goto h3
                             mat[i-1][j] += mat[i][j];
                             mat[i][j] = 0;
+                            score += mat[i-1][j];
+                            i = 4;
                             flag = 1;
                         }
                         else if(mat[i][j] == 0 || mat[i][j] != mat[i-1][j]) {
@@ -292,7 +308,7 @@ void play() {
 //            case 25: 
                 // down
                 if((empty=judge_empty()) == 0) {
-                    game_over();
+                    game_over(0);
                 }
                 for(j = 0; j < 4; j++) {
                     for(i = 0; i < 3; i++){
@@ -308,8 +324,17 @@ void play() {
                             flag = 1;
                         }
                         else if(mat[i][j] != 0 && mat[i][j] == mat[i+1][j]) {
+                            if(i+2 <= 3 && mat[i][j] == mat[i+2][j]) {
+                                if(i+3 <= 3 && mat[i][j] == mat[i+3][j]) {
+                                    goto h4;
+                                }
+                                continue;
+                            }
+                            h4:    // goto h4
                             mat[i+1][j] += mat[i][j];
                             mat[i][j] = 0;
+                            score += mat[i+1][j];
+                            i = -1;
                             flag = 1;
                         }
                         else if(mat[i][j] == 0 || mat[i][j] != mat[i+1][j]) {
@@ -331,7 +356,10 @@ void play() {
     }
 }
 
-void game_over() {
-    printf("Game Over! \n");
+void game_over(int n) {
+    if(n == 0)
+        printf("Game Over! \n");
+    else if(n == 1)
+        printf("win! \n");
     exit(0);
 }
