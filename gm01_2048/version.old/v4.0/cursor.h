@@ -1,10 +1,11 @@
 /* Notice: do not use "cvas_x, cvas_y, range_x, canvas, mode" as variable name */
 
-/* principles: First, we create a Canvas(define a rectangular space),   
-               it was full of ' '(space), and surranded by black lines. 
-               Then, we can draw the Canvas with character and cursor. */
+/* Principles: First, create a Canvas(define a rectangular space),   
+ * which was filled with ' '(space), and surranded by black lines. 
+ * Then, draw the Canvas with character and cursor. 
+ */
 
-/* As for the direction, x is pointing to down, and y is pointing to right */
+/* Direction, x is pointing to down, and y is pointing to right */
 
 #include <stdio.h>
 #include <termios.h>
@@ -15,11 +16,12 @@
 #ifndef __CURSOR_H__
 #define __CURSOR_H__
 #define SPACE ' '
+
 int cvas_x, cvas_y;    //cursors
 int range_x = 0;
 int range_y = 0;
 char **cvas;
-int mode = 2; // 1(use): hide detials; 2(debug):show detials
+int mode = 2; // 2(debug):show detials; 1(use): hide detials;
 
 // create a Canvas
 char **canvas(int a, int b) {
@@ -33,7 +35,8 @@ char **canvas(int a, int b) {
     range_y = b+1;
     for(i = 0; i <= a+1; i++) {
         for(j = 0; j <= b+1; j++) {
-            cvas_x = i, cvas_y = j;
+            cvas_x = i;
+            cvas_y = j;
             if(i == 0 || i == a+1)
                 cvas[i][j] = '-';
             else if(j == 0 || j == b+1)
