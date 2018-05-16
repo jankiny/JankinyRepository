@@ -8,10 +8,10 @@
 /* Direction, x is pointing to down, and y is pointing to right */
 
 #include <stdio.h>
-//#include <termios.h>
-//#include <unistd.h>
-//#include <assert.h>
-//#include <string.h>
+#include <termios.h>
+#include <unistd.h>
+#include <assert.h>
+#include <string.h>
 #include <stdlib.h>
 #ifndef __CURSOR_H__
 #define __CURSOR_H__
@@ -116,19 +116,6 @@ void mode_change(int n) {
         printf("Only 1-2 modes exist!\n");
 }
 
-char getch()
-{
-    char c;
-
-    system("stty -echo");
-    system("stty -icanon");
-    c=getchar();
-    system("stty icanon");
-    system("stty echo");
-    return c;
-}
-
-/*
 int getch() {
     int c = 0;
     struct termios org_opts, new_opts;
@@ -144,6 +131,5 @@ int getch() {
     assert(res == 0);
     return c;
 }
-*/
 
 #endif
