@@ -1,5 +1,3 @@
-/* Notice: don't use "cvas_x, cvas_y, range_x, canvas, mode" as variable name */
-
 /* Principles: First, create a Canvas(define a rectangular space),   
  * which was filled with ' '(space), and surranded by black lines. 
  * Then, draw the Canvas with character and cursor. 
@@ -8,11 +6,10 @@
 /* Direction, x is pointing to down, and y is pointing to right */
 
 #include <stdio.h>
-//#include <termios.h>
-//#include <unistd.h>
-//#include <assert.h>
-//#include <string.h>
 #include <stdlib.h>
+#ifdef _WinNT_
+    #include <conio.h>
+#endif
 #ifndef __CURSOR_H__
 #define __CURSOR_H__
 #define SPACE ' '
@@ -88,8 +85,11 @@ void char_move(int a, int b) {
 
 void refresh() {
     int i, j, t;
-
+#ifdef _WinNT_
     system("clear");
+#else
+    system("cls");
+#endif
     for(i = 0; i <= range.x; i++) {
         for(j = 0; j <= range.y; j++) {
             printf("%c", cvas[i][j]);
@@ -116,6 +116,7 @@ void mode_change(int n) {
         printf("Only 1-2 modes exist!\n");
 }
 
+#ifdef _Linux_
 char getch()
 {
     char c;
@@ -127,23 +128,6 @@ char getch()
     system("stty echo");
     return c;
 }
-
-/*
-int getch() {
-    int c = 0;
-    struct termios org_opts, new_opts;
-    int res = 0;
-
-    res = tcgetattr(STDIN_FILENO, &org_opts);
-    assert(res==0);
-    memcpy(&new_opts, &org_opts, sizeof(new_opts));
-    new_opts.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
-    c = getchar();
-    res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-    assert(res == 0);
-    return c;
-}
-*/
+#endif
 
 #endif
