@@ -1,6 +1,6 @@
-/* Problem: 
- *
- */
+/* Problem:
+** use getche()
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -162,7 +162,7 @@ void play() {
     int flag = 0;
 
     while(1) {
-        switch(ch=getch()) {
+        switch(ch=getche()) {
             case 97: 
             case 65: 
                 // left 

@@ -10,12 +10,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 
 #ifdef WIN32
 #include <conio.h>
 #else
-char getch()
+char getche()
 {
     char c;
 
