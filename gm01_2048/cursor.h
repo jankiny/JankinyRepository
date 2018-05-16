@@ -7,9 +7,23 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #ifdef _WinNT_
     #include <conio.h>
+#else
+char getch()
+{
+    char c;
+
+    system("stty -echo");
+    system("stty -icanon");
+    c=getchar();
+    system("stty icanon");
+    system("stty echo");
+    return c;
+}
 #endif
+
 #ifndef __CURSOR_H__
 #define __CURSOR_H__
 #define SPACE ' '
@@ -86,9 +100,9 @@ void char_move(int a, int b) {
 void refresh() {
     int i, j, t;
 #ifdef _WinNT_
-    system("clear");
-#else
     system("cls");
+#else
+    system("clear");
 #endif
     for(i = 0; i <= range.x; i++) {
         for(j = 0; j <= range.y; j++) {
@@ -115,19 +129,5 @@ void mode_change(int n) {
     else
         printf("Only 1-2 modes exist!\n");
 }
-
-#ifdef _Linux_
-char getch()
-{
-    char c;
-
-    system("stty -echo");
-    system("stty -icanon");
-    c=getchar();
-    system("stty icanon");
-    system("stty echo");
-    return c;
-}
-#endif
 
 #endif
