@@ -1,15 +1,19 @@
 /* Principles: First, create a Canvas(define a rectangular space),   
- * which was filled with ' '(space), and surranded by black lines. 
- * Then, draw the Canvas with character and cursor. 
- */
+** which was filled with ' '(space), and surranded by black lines.
+** Then, draw the Canvas with character and cursor.
+*/
 
 /* Direction, x is pointing to down, and y is pointing to right */
 
+#ifndef __CURSOR_H__
+#define __CURSOR_H__
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 
-#ifdef _WinNT_
-    #include <conio.h>
+#ifdef WIN32
+#include <conio.h>
 #else
 char getch()
 {
@@ -17,15 +21,13 @@ char getch()
 
     system("stty -echo");
     system("stty -icanon");
-    c=getchar();
+    c = getchar();
     system("stty icanon");
     system("stty echo");
     return c;
 }
 #endif
 
-#ifndef __CURSOR_H__
-#define __CURSOR_H__
 #define SPACE ' '
 
 int cvas_x, cvas_y;    //cursors
@@ -99,7 +101,7 @@ void char_move(int a, int b) {
 
 void refresh() {
     int i, j, t;
-#ifdef _WinNT_
+#ifdef WIN32
     system("cls");
 #else
     system("clear");
