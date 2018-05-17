@@ -27,7 +27,7 @@ char getche()
 }
 #endif
 
-#define SPACE ' '
+//#define SPACE ' '
 
 int cvas_x, cvas_y;    //cursors
 struct cursor {
@@ -92,7 +92,7 @@ void char_move(int a, int b) {
         exit(1);
     }
     temp = cvas[curs.x][curs.y];
-    cvas[curs.x][curs.y] = SPACE;
+    cvas[curs.x][curs.y] = ' ';
     curs.x = a;
     curs.y = b;
     cvas[curs.x][curs.y] = temp;

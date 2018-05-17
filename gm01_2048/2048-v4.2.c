@@ -1,5 +1,6 @@
 /* Problem:
-** use getche()
+** cursor.h: command "cls" flick in WIN.    Line ./cursor.h/: 104
+** getch() can't work in cfree3.5, using getche() for now.   Line: 166
 */
 #include <stdio.h>
 #include <stdlib.h>
