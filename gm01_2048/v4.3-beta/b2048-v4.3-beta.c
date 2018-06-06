@@ -22,6 +22,10 @@ char **cvas;    // Canvas
 int mat[4][4];
 int score = 0;
 
+/* game menu */
+char game_menu();
+void score_system();
+
 /* initialization 初始化 */
 void init();    
 
@@ -41,10 +45,19 @@ void game_over();    // game over
 
 int main() 
 {
-    init();
-    mode_change(2);
-    cvas_refresh();
-    play();
+    switch(game_menu()) {
+        case '1':
+            init();
+            mode_change(2);
+            cvas_refresh();
+            play();
+            break;
+        case '2':
+            score_system();
+            break;
+        case '0':
+            exit(0);
+    }
 }
 
 /* create a canvas; draw frame; product the begining number */
@@ -434,9 +447,22 @@ void game_over(int n)
     exit(0);
 }
 
-void game_menu() 
+char game_menu() 
 {
-    ;
+    char ch;
+
+    printf("This is game menu!\n");
+    printf("-----------------\n");
+    printf("0 - exit\n");
+    printf("1 - Start\n");
+    printf("2 - Score\n");
+    printf("-----------------\n");
+    printf("Input: ");
+    ch=getchar();
+    while(ch <= '0' || ch >= '2') {
+        ch = getchar();
+    }
+    return ch;
 }
 
 void score_system()
