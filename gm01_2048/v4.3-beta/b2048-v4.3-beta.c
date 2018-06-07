@@ -4,11 +4,11 @@
  *     getch() can't work in cfree3.5, using getche() for now.   Line: 191
  *
  * Update v4.4:
- *     easy to read and mainten, modify some comment; done!
- *     modify game logic; done!
- *     add game menu;
+ *     easy to read and mainten, modify some comment; done
+ *     modify game logic; done
+ *     add game menu; done
+ *     expand the canvas, Goal to 8192(2^13); done
  *     add score system;
- *     expand the canvas, Goal to 8192(2^13);
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,14 +17,22 @@
 
 /* 每个宫格只能容纳3个字符 every cubes only have 3 character on this version */
 #define GOAL 1024
+/* 宫格的宽、高 */
+#define WIDTH 4
+#define HEIGHT 1
 
 char **cvas;    // Canvas
 int mat[4][4];
 int score = 0;
+int back = 0;
 
 /* game menu */
 char game_menu();
+char game_pause();
+/* score system */
 void score_system();
+void writetof();
+void read_data();
 
 /* initialization 初始化 */
 void init();    
@@ -41,22 +49,32 @@ int judge_empty();    //judge empty 判断是否为空
 
 /* game logic 游戏逻辑 */
 void play(); 
-void game_over();    // game over 
+void game_over();
 
 int main() 
 {
-    switch(game_menu()) {
-        case '1':
-            init();
-            mode_change(2);
-            cvas_refresh();
-            play();
-            break;
-        case '2':
-            score_system();
-            break;
-        case '0':
-            exit(0);
+    while(1) {
+        switch(game_menu()) {
+            case '1':
+                init();
+                cvas_refresh();
+                play();
+                break;
+            case '2':
+                score_system();
+                break;
+            case '3':
+                printf("left    - a/A\n");
+                printf("right   - d/D\n");
+                printf("up      - w/W\n");
+                printf("down    - s/S\n");
+                printf("pause   - p/P\n");
+                printf("\n<press any keys to continue>\n");
+                getche();
+                break;
+            case '0':
+                exit(0);
+        }
     }
 }
 
@@ -64,17 +82,20 @@ int main()
 void init() 
 {
     int i, j;
+    int h, w;
 
-    cvas = canvas(7, 15);
+    back = 0;
+    score = 0;
+    cvas = canvas(3+4*HEIGHT, 3+4*WIDTH);
     /* draw frame */
-    for(i = 1; i <= 7; i++) {
-        for(j = 4; j <= 12; j += 4) {
+    for(i = 1; i <= 3+4*HEIGHT; i += HEIGHT+1) {
+        for(j = WIDTH+1; j <= 3+3*WIDTH; j += WIDTH+1) {
             cursor_move(i, j);
             addch('|');
         }
     }
-    for(i = 2; i <= 6; i += 2) {
-        for(j = 1; j <= 15; j++) {
+    for(i = HEIGHT+1; i <= 3+4*HEIGHT; i += HEIGHT+1) {
+        for(j = 1; j <= 3+4*WIDTH; j++) {
             cursor_move(i, j);
             addch('-');
         }
@@ -93,16 +114,8 @@ void cvas_refresh()
     int i, j;
 
     map_mat();
-    refresh();
+    refresh(1);
     printf("Score: %d \n", score);
-    if(mode == 1) {
-        for(i = 0; i < 4; i++) { 
-            for(j = 0; j < 4; j++)
-                printf("%d ", mat[i][j]);
-            printf(";");
-        }
-        printf("\n");
-    }
 }
 
 /* map matrix to canvas */
@@ -111,8 +124,8 @@ void map_mat()
     int i, j;
     int a, b;
 
-    for(a = 0, i = 1; i <= 7; i += 2) {
-        for(b = 0, j = 3; j <= 15; j += 4) {
+    for(a = 0, i = HEIGHT; i <= 3+4*HEIGHT; i += HEIGHT+1) {
+        for(b = 0, j = WIDTH; j <= 3+4*WIDTH; j += WIDTH+1) {
             mat_to_canvas(i, j, a, b);
             b++;
         }
@@ -171,6 +184,7 @@ void product_number()
         b = rand() % 4;
     } while(mat[a][b]);    // if mat[a][b] is empty, out
     mat[a][b] = randN(50);
+    score += mat[a][b];
 }
 
 /* judge empty pisition */
@@ -200,10 +214,10 @@ void play()
     int empty;
     int move = 0;    //是否移动过的move_flag,用于判断是否该product_number()
 
-    while(1) {
+    while(!back) {
         switch(ch=getche()) {
-            case 97: 
-            case 65: 
+            case 'a': 
+            case 'A': 
                 /* 左：行由上向下，列由右向左，进行二维地遍历 */ 
                 for(i = 0; i < 4; i++) {
                     for(j = 3; j > 0; j--) {
@@ -262,19 +276,16 @@ void play()
                     cvas_refresh();
                 }
                 /* 如果没有移动过，则判断是否已没有位置可以移动 */
-                /* BUG: 若数组全是非0，且只有左右的维度有两个相同的数，此时，
-                 * 进行向左或向右的操作，可能柳暗花明又一村，但若手误或某些原因
+                /* BUG: 若数组全是非0，即所有宫格都有数字，此时，如果存在进行向
+                 * 左或向右的操作，可使部分数字相加，使游戏继续。但若手误或某些原因
                  * 进行了向上或向下的操作，由于move_flag为0，会判断为游戏结束
                  */
                 else if((empty=judge_empty()) == 0) {
                     game_over(0);
                 }
-                /* 辅助debug */
-                if(mode == 1)
-                    printf("left finish \n");
                 break;
-            case 100: 
-            case 68: 
+            case 'd': 
+            case 'D': 
                 // right
                 for(i = 0; i < 4; i++) {
                     for(j = 0; j < 3; j++) {
@@ -323,11 +334,8 @@ void play()
                 else if((empty=judge_empty()) == 0) {
                     game_over(0);
                 }
-                if(mode == 1)
-                    printf("right finish \n");
-                break;
-            case 119: 
-            case 87: 
+            case 'w': 
+            case 'W': 
                 // up
                 for(j = 0; j < 4; j++) {
                     for(i = 3; i > 0; i--){
@@ -376,11 +384,9 @@ void play()
                 else if((empty=judge_empty()) == 0) {
                     game_over(0);
                 }
-                if(mode == 1)
-                    printf("up finish \n");
                 break;
-            case 115: 
-            case 83: 
+            case 's': 
+            case 'S': 
                 // down
                 for(j = 0; j < 4; j++) {
                     for(i = 0; i < 3; i++){
@@ -429,8 +435,21 @@ void play()
                 else if((empty=judge_empty()) == 0) {
                     game_over(0);
                 }
-                if(mode == 1)
-                    printf("down finish \n");
+                break;
+            case 'p':
+            case 'P':
+                // pause
+                switch(game_pause()) {
+                    case '0':
+                        cvas_refresh();
+                        printf("quit\n");
+                        game_over(0);
+                        break;
+                    case '1':
+                        cvas_refresh();
+                        printf("<press direction keys to continue>\n");
+                        break;
+                }
                 break;
             default:
                 break;
@@ -440,32 +459,61 @@ void play()
 
 void game_over(int n) 
 {
+    refresh(1);
     if(n == 0)
         printf("Game Over! \n");
     else if(n == 1)
         printf("win! \n");
-    exit(0);
+    printf("Final Score: %d\n", score);
+    back = 1;
 }
 
 char game_menu() 
 {
     char ch;
 
-    printf("This is game menu!\n");
+    refresh(0);
+    printf("      [menu]\n");
     printf("-----------------\n");
-    printf("0 - exit\n");
     printf("1 - Start\n");
     printf("2 - Score\n");
+    printf("3 - Help\n");
+    printf("0 - Exit\n");
     printf("-----------------\n");
-    printf("Input: ");
-    ch=getchar();
-    while(ch <= '0' || ch >= '2') {
-        ch = getchar();
+    ch = getche();
+    while(ch < '0' || ch > '3') {
+        ch = getche();
+    }
+    return ch;
+}
+
+char game_pause() 
+{
+    char ch;
+
+    printf("pause...\n");
+    printf("-------------\n");
+    printf("1 - continue\n");
+    printf("0 - quit\n");
+    printf("-------------\n");
+    ch = getche();
+    while(ch < '0' || ch > '1') {
+        ch = getche();
     }
     return ch;
 }
 
 void score_system()
+{
+    ;
+}
+
+void writetof()
+{
+    ;
+}
+
+void read_data()
 {
     ;
 }

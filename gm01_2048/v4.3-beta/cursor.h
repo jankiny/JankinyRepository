@@ -27,19 +27,18 @@ char getche()
 }
 #endif
 
-//#define SPACE ' '
-
 int cvas_x, cvas_y;    //cursors
 struct cursor {
     int x;
     int y;
 } curs;
-struct range {    // range of canvas
+/* range of canvas */
+struct range {
     int x;
     int y;
 } range;
+
 char **cvas;
-int mode = 1; // 1(debug):show detials; 2(use): hide detials;
 
 // create a Canvas
 char **canvas(int a, int b) {
@@ -98,37 +97,21 @@ void char_move(int a, int b) {
     cvas[curs.x][curs.y] = temp;
 }
 
-void refresh() {
+void refresh(int x) {
     int i, j, t;
 #ifdef WIN32
     system("cls");
 #else
     system("clear");
 #endif
-    for(i = 0; i <= range.x; i++) {
-        for(j = 0; j <= range.y; j++) {
-            printf("%c", cvas[i][j]);
+    if(x) {
+        for(i = 0; i <= range.x; i++) {
+            for(j = 0; j <= range.y; j++) {
+                printf("%c", cvas[i][j]);
+            }
+            putchar('\n');
         }
-        if(mode == 1) {
-            printf("%2d", i);
-        }
-        putchar('\n');
     }
-    if(mode == 1) {
-        for(j = 0; j <= range.y; j += 2) {
-            t = j%10;
-            printf("%d ", t);
-        }
-        putchar('\n');
-    }
-}
-
-void mode_change(int n) {
-    if(n >= 1 && n <= 2) {
-        mode = n;
-    }
-    else
-        printf("Only 1-2 modes exist!\n");
 }
 
 #endif
