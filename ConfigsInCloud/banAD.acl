@@ -1858,6 +1858,7 @@
 (^|\.)steamcontent\.com$
 (^|\.)steamgames\.com$
 (^|\.)steampowered\.com\.8686c\.com$
+(^|\.)steampowered\.com$
 (^|\.)steamstat\.us$
 (^|\.)steamstatic\.com$
 (^|\.)steamusercontent\.com$
@@ -9005,7 +9006,6 @@
 (^|\.)humblebundle\.com$
 (^|\.)steam-chat\.com$
 (^|\.)steamcommunity\.com$
-(^|\.)steampowered\.com$
 (^|\.)steamstatic\.com$
 
 # Telegram
